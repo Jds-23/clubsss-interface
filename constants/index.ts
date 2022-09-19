@@ -1,0 +1,1 @@
+export const clubv1subgraph="https://api.thegraph.com/subgraphs/name/jds-23/club-v1"
