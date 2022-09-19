@@ -2,10 +2,11 @@ import Head from "next/head";
 import Image from "next/image";
 // import { useSubgraph } from "../hooks/useSubgraph";
 import { useMoralis } from "react-moralis";
+import Button from "../components/Button/Button";
+import ClubCard from "../components/ClubCard/ClubCard";
 
 export default function Home() {
   // const data = useSubgraph();
-  const { authenticate, isAuthenticated, user } = useMoralis();
 
   return (
     <div>
@@ -15,11 +16,59 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
-        <button className="bg-black" onClick={() => authenticate()}>
-          Authenticate
-        </button>
-        <h1>Welcome {user?.get("username")}</h1>
+      <div className="flex flex-col-reverse lg:flex-row lg:mt-2 px-4 max-w-[1340px] mx-auto">
+        <div className="w-full">
+          <h1 className="font-extrabold text-3xl w-full max-w-xl ">
+            Join your favorite clubs and take part in the discussions{" "}
+          </h1>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <ClubCard
+              address=""
+              bioOfClub="Something to think of"
+              nameOfClub="The Iron Man Club"
+              postCount={20}
+              tags={[
+                { text: "Sports & Game", color: "orange" },
+                { text: "Development", color: "green" },
+              ]}
+            />
+            <ClubCard
+              address=""
+              bioOfClub="Something to think of"
+              nameOfClub="The Iron Man Club"
+              postCount={20}
+              tags={[
+                { text: "Sports & Game", color: "orange" },
+                { text: "Development", color: "green" },
+              ]}
+            />
+            <ClubCard
+              address=""
+              bioOfClub="Something to think of"
+              nameOfClub="The Iron Man Club"
+              postCount={20}
+              tags={[
+                { text: "Sports & Game", color: "orange" },
+                { text: "Development", color: "green" },
+              ]}
+            />
+          </div>
+        </div>
+        <div className="w-full lg:w-96">
+          <div className="relative w-full mb-4 lg:ml-4 bg-black rounded-lg p-3">
+            <h1 className="text-white font-bold text-lg">
+              Create your club now
+            </h1>
+            <p className="text-xs text-lightGray opacity-60">
+              Connect with more like minded people and discover more things!
+            </p>
+            <img
+              src="/img/create-club.png"
+              className="w-20 h-20 absolute right-0 bottom-0"
+            />
+            <Button className="mt-4 text-sm">Get Started Now 🚀</Button>
+          </div>
+        </div>
       </div>
     </div>
   );
