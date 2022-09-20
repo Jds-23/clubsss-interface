@@ -58,6 +58,7 @@ const Post = () => {
         params: options,
         onSuccess: () => {
           txSuccess("Commented", "");
+          setComment("");
         },
         onError: (error) => {
           errorToast("Error");

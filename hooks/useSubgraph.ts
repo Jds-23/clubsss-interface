@@ -15,7 +15,7 @@ const QUERY = `{
 // @ts-ignore
 const fetcher = (query) => request(clubv1subgraph, query);
 
-export function useSubgraph(){
-    const { data } = useSWR(QUERY, fetcher, { refreshInterval: 1000 });
-    return data
+export function useSubgraph() {
+  const { data } = useSWR(QUERY, fetcher, { refreshInterval: 7000 });
+  return data;
 }

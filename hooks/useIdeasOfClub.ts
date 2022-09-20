@@ -66,7 +66,7 @@ const QUERYGETIDEA = (address: string) => `{
 const fetcher = (query) => request(clubv1subgraph, query);
 
 export function useIdeasOfClub(address: string): IdeaInterface[] | undefined {
-  const { data } = useSWR(QUERY(address), fetcher, { refreshInterval: 1000 });
+  const { data } = useSWR(QUERY(address), fetcher, { refreshInterval: 7000 });
   return data?.ideas?.map((idea: any) => {
     const upScore = ethers.BigNumber.from(idea.upScore);
     const score =
@@ -84,7 +84,7 @@ export function useIdeasOfClub(address: string): IdeaInterface[] | undefined {
 }
 export function useIdea(address: string): IdeaInterface | undefined {
   const { data } = useSWR(QUERYGETIDEA(address), fetcher, {
-    refreshInterval: 1000,
+    refreshInterval: 7000,
   });
   return data?.ideas?.map((idea: any) => {
     const upScore = ethers.BigNumber.from(idea.upScore);

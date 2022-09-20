@@ -26,7 +26,7 @@ const QUERY = `{
 const fetcher = (query) => request(clubv1subgraph, query);
 
 export function useClubs(): ClubInterface[] | undefined {
-  const { data } = useSWR(QUERY, fetcher, { refreshInterval: 1000 });
+  const { data } = useSWR(QUERY, fetcher, { refreshInterval: 7000 });
   return data?.clubs?.map((club: any) => {
     const decodedData = ethers.utils.defaultAbiCoder.decode(
       ["address", "string", "string"],
@@ -44,7 +44,7 @@ export function useClubs(): ClubInterface[] | undefined {
   });
 }
 export function useClub(id: string): ClubInterface {
-  const { data } = useSWR(QUERY, fetcher, { refreshInterval: 1000 });
+  const { data } = useSWR(QUERY, fetcher, { refreshInterval: 7000 });
   return data?.clubs
     ?.filter((club: any) => club.id === id)
     ?.map((club: any) => {

@@ -48,10 +48,22 @@ const CreateYourClubModal = ({
   const deployClub = useCallback(async () => {
     if (optionSelected === undefined || !metadatauri || clubName.length < 3)
       return;
-    const data = await ethers.utils.defaultAbiCoder.encode(
-      ["address", "string", "string"],
-      [address, clubName, metadatauri]
-    );
+    let data;
+    if (optionSelected === 0 || optionSelected === 1)
+      data = await ethers.utils.defaultAbiCoder.encode(
+        ["address", "string", "string"],
+        [address, clubName, metadatauri]
+      );
+    else if (optionSelected === 2)
+      data = await ethers.utils.defaultAbiCoder.encode(
+        ["string", "string"],
+        [clubName, metadatauri]
+      );
+    else if (optionSelected === 3)
+      data = await ethers.utils.defaultAbiCoder.encode(
+        ["uint256", "string", "string"],
+        [invites, clubName, metadatauri]
+      );
     let options = {
       contractAddress: ClubFactoryAddress,
       functionName: "deployClub",
@@ -71,7 +83,14 @@ const CreateYourClubModal = ({
         console.log(error);
       },
     });
-  }, [contractProcessor, optionSelected, address, clubName, metadatauri]);
+  }, [
+    contractProcessor,
+    optionSelected,
+    address,
+    clubName,
+    metadatauri,
+    invites,
+  ]);
 
   return (
     <>
@@ -173,7 +192,7 @@ const CreateYourClubModal = ({
               )}
             </>
           )}
-          {optionSelected === 2 && (
+          {optionSelected === 3 && (
             <div>
               <label className="font-bold mt-1">
                 Number Of Invites per Member

@@ -24,34 +24,33 @@ const PostCard = ({
   clubName: string;
   displayOfClub: string | undefined;
 }) => {
-  console.log(id.split("-"));
   const address = id.split("-")[0];
   const index = id.split("-")[1];
   const { vote } = useVote({ address, index });
   return (
-    <Link href={`/post/${id}`}>
-      <div className="cursor-pointer border-b pb-1 mt-2 border-b-lightGray flex items-center">
-        <div className="flex items-center opacity-50 h-full mr-2">
-          <div className="flex-col flex items-center">
-            <button className="cursor-pointer" onClick={() => vote()}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2.5}
-                stroke="currentColor"
-                className="w-6 h-6 -mb-2.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                />
-              </svg>
-            </button>
-            {nFormatter(score, 4)}
-          </div>
+    <div className="cursor-pointer border-b pb-1 mt-2 border-b-lightGray flex items-center">
+      <div className="flex items-center opacity-50 h-full mr-2">
+        <div className="flex-col flex items-center">
+          <button className="cursor-pointer" onClick={() => vote()}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2.5}
+              stroke="currentColor"
+              className="w-6 h-6 -mb-2.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.5 15.75l7.5-7.5 7.5 7.5"
+              />
+            </svg>
+          </button>
+          {nFormatter(score, 4)}
         </div>
+      </div>
+      <Link href={`/post/${id}`}>
         <div>
           <h1 className="font-bold text-lg">{message}</h1>
           {/* <h1 className=" text-xs mt-1">
@@ -93,8 +92,8 @@ const PostCard = ({
             </button>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
