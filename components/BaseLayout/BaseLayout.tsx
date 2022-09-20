@@ -16,8 +16,8 @@ export default function BaseLayout({
   return (
     <>
       <MoralisProvider
-        appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID??""}
-        serverUrl={process.env.NEXT_PUBLIC_SERVER_URL??""}
+        appId={"yzHBqKGx2QiuCrMzKDHaykZmsnuhrPlDURuSXEHt"}
+        serverUrl={"https://9pbll5qyocns.usemoralis.com:2053/server"}
       >
         <>
           <Head>
@@ -25,7 +25,7 @@ export default function BaseLayout({
           </Head>
 
           <Header />
-          <div className="pt-[72px] min-h-screen">
+          <div className="pt-16 min-h-screen">
             <Toaster position="bottom-right" />
             {children}
           </div>

@@ -13,6 +13,7 @@ const Header = () => {
         <div>
           <Button
             onClick={() => {
+              console.log(isAuthenticated, user, account);
               if (!isAuthenticated) {
                 authenticate();
               }
