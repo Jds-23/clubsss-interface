@@ -2,7 +2,6 @@ import useSWR from "swr";
 import { clubv1subgraph } from "../constants";
 import { request } from "graphql-request";
 import { ethers } from "ethers";
-import { useCallback, useState } from "react";
 
 interface ClubInterface {
   id: string;
@@ -33,7 +32,7 @@ export function useClubs(): ClubInterface[] | undefined {
       ["address", "string", "string"],
       club.data
     );
-    console.log(decodedData);
+
     return {
       id: club.id,
       type: parseFloat(club.type),
@@ -43,4 +42,24 @@ export function useClubs(): ClubInterface[] | undefined {
       metadata: decodedData[2],
     };
   });
+}
+export function useClub(id: string): ClubInterface {
+  const { data } = useSWR(QUERY, fetcher, { refreshInterval: 1000 });
+  return data?.clubs
+    ?.filter((club: any) => club.id === id)
+    ?.map((club: any) => {
+      const decodedData = ethers.utils.defaultAbiCoder.decode(
+        ["address", "string", "string"],
+        club.data
+      );
+
+      return {
+        id: club.id,
+        type: parseFloat(club.type),
+        ideasCount: parseFloat(club.ideasCount),
+        data: club.data,
+        clubName: decodedData[1],
+        metadata: decodedData[2],
+      };
+    })[0];
 }

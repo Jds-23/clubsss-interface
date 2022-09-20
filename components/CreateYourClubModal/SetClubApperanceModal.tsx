@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { useMoralisFile } from "react-moralis";
 import { useCreateAClubModal } from "../../context/CreateAClubContextProvider";
+import useToast from "../../hooks/useToast";
 import { jsonFile } from "../../utils";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
@@ -21,6 +22,7 @@ const SetClubApperanceModal = () => {
     setApperanceOpen,
   } = useCreateAClubModal();
   const { error, isUploading, moralisFile, saveFile } = useMoralisFile();
+  const { txSuccess, txWaiting, error: errorToast } = useToast();
 
   const coverInput = useRef<any>(null);
 
@@ -42,6 +44,7 @@ const SetClubApperanceModal = () => {
     const file = jsonFile("metadata.json", { clubName, about, cover, display });
     const Url = (await saveFile(file.name, file, { saveIPFS: true }))?._url;
     setMetadatauri(Url);
+    txSuccess("Apperance Saved", "");
   }, [clubName, about, cover, display, setMetadatauri]);
   return (
     <Modal
