@@ -12,7 +12,6 @@ export default function Home() {
   // const data = useSubgraph();
   const { open, setOpen } = useCreateAClubModal();
   const clubs = useClubs();
-  console.log(clubs);
   return (
     <div>
       <Head>

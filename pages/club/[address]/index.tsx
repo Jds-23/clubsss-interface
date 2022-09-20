@@ -29,8 +29,10 @@ const Club = () => {
     if (metadata) return;
     fetch(metadataUrl)
       .then((res) => res.json())
-      .then((res) => setMetadata(res))
-      .catch((err) => setMetadataError(true));
+      .then((res) => setMetadata(res.description))
+      .catch((err) => {
+        setMetadataError(true);
+      });
   }, [club, metadata]);
 
   return (
