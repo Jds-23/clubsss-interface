@@ -6,8 +6,8 @@ import Button from "../../../components/Button/Button";
 import PostCard from "../../../components/PostIdea/PostCard";
 import { useClub } from "../../../hooks/useClubs";
 import { useIdeasOfClub } from "../../../hooks/useIdeasOfClub";
-import ClubContractAbi from "../../../constants/abis/ClubContract.json";
 import useToast from "../../../hooks/useToast";
+import Link from "next/link";
 
 interface MetadataInterface {
   clubName: string;
@@ -32,34 +32,6 @@ const Club = () => {
       .then((res) => setMetadata(res))
       .catch((err) => setMetadataError(true));
   }, [club, metadata]);
-
-  const contractProcessor = useWeb3ExecuteFunction();
-
-  const { txSuccess, txWaiting, error: errorToast } = useToast();
-
-  const post = useCallback(async () => {
-    if (typeof address !== "string" || message.length < 10) return;
-
-    let options = {
-      contractAddress: address,
-      functionName: "postIdea",
-      abi: ClubContractAbi,
-      params: {
-        _message: message,
-        _metadata: "Nevermind",
-      },
-    };
-    await contractProcessor.fetch({
-      params: options,
-      onSuccess: () => {
-        txSuccess("Posted Idea", "");
-      },
-      onError: (error) => {
-        errorToast("Error");
-        console.log(error);
-      },
-    });
-  }, [contractProcessor, address, message]);
 
   return (
     <div>
@@ -111,12 +83,14 @@ const Club = () => {
               placeholder="What are you thinking about?"
               className="w-full grow border border-slate-600 rounded-lg px-6 py-3 bg-gray text-white outline-none"
             />
-            <Button
-              onClick={() => post()}
-              className="ml-4 whitespace-nowrap px-6 py-3 text-base"
-            >
-              Post to Club
-            </Button>
+            <Link href={`/club/${address}/post`}>
+              <Button
+                // onClick={() => post()}
+                className="ml-4 whitespace-nowrap px-6 py-3 text-base"
+              >
+                Post to Club
+              </Button>
+            </Link>
           </div>
           <div className="mt-3 w-full border-b pb-1 border-b-gray flex items-center">
             <div className={`mr-2 text-xs cursor-pointer ${"text-gray"}`}>
