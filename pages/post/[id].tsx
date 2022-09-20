@@ -10,6 +10,7 @@ import remarkGfm from "remark-gfm";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import useToast from "../../hooks/useToast";
 import ClubContractAbi from "../../constants/abis/ClubContract.json";
+import useVote from "../../hooks/useVote";
 
 const Post = () => {
   const router = useRouter();
@@ -66,6 +67,11 @@ const Post = () => {
     }
   }, [contractProcessor, comment, id]);
 
+  const address = typeof id === "string" ? id.split("-")[0] : "";
+  const index = typeof id === "string" ? id.split("-")[1] : "";
+
+  const { vote } = useVote({ address, index });
+
   return (
     <div>
       <Head>
@@ -78,10 +84,7 @@ const Post = () => {
           <div className="flex items-center">
             <div className="flex items-center opacity-50 h-full mr-2">
               <div className="flex-col flex items-center">
-                <button
-                  className="cursor-pointer"
-                  // onClick={() => vote()}
-                >
+                <button className="cursor-pointer" onClick={() => vote()}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -158,7 +161,7 @@ const Post = () => {
             <div className="mt-4">
               <h4 className="font-bold">Comments</h4>
               {idea?.comments?.map((comment) => (
-                <div>
+                <div key={comment.id}>
                   <span className="text-[10px]">
                     {getEllipsisTxt(comment.user)}
                   </span>
