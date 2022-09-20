@@ -140,7 +140,9 @@ const CreateYourClubModal = ({
             />
           </div>
           <div>
-            <label className="font-bold mt-1">Club's Membership Module</label>
+            <label className="font-bold mt-1">
+              Club&apos;s Membership Module
+            </label>
             <div className="relative mt-1">
               <button
                 type="button"

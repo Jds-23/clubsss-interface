@@ -30,6 +30,7 @@ export default function Home() {
             {clubs?.map((club) => {
               return (
                 <ClubCard
+                  key={club.id}
                   address={club.id}
                   bioOfClub=""
                   nameOfClub={club.clubName}
