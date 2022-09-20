@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useMoralisFile, useWeb3ExecuteFunction } from "react-moralis";
 import Button from "../../../components/Button/Button";
 import useToast from "../../../hooks/useToast";
@@ -19,6 +19,16 @@ const Post = () => {
   const [preview, setPreview] = useState(false);
   const [metadata, setMetadata] = useState<string>();
 
+  const [postStatus, setPostStatus] = useState<string>();
+
+  useEffect(() => {
+    if (message.length < 10) {
+      setPostStatus("Message should be of more then >10 characters");
+    } else {
+      setPostStatus(undefined);
+    }
+  }, [setPostStatus, message]);
+
   const contractProcessor = useWeb3ExecuteFunction();
 
   const { txSuccess, txWaiting, error: errorToast } = useToast();
@@ -27,29 +37,42 @@ const Post = () => {
 
   const post = useCallback(async () => {
     if (typeof address !== "string" || message.length < 10) return;
-    const file = jsonFile("metadata.json", { description });
-    const _metadata = (await saveFile(file.name, file, { saveIPFS: true }))
-      ?._url;
+    try {
+      setPostStatus("Saving Message in IPFS");
+      const file = jsonFile("metadata.json", { description });
+      const _metadata = (await saveFile(file.name, file, { saveIPFS: true }))
+        ?._url;
 
-    let options = {
-      contractAddress: address,
-      functionName: "postIdea",
-      abi: ClubContractAbi,
-      params: {
-        _message: message,
-        _metadata,
-      },
-    };
-    await contractProcessor.fetch({
-      params: options,
-      onSuccess: () => {
-        txSuccess("Posted Idea", "");
-      },
-      onError: (error) => {
-        errorToast("Error");
-        console.log(error);
-      },
-    });
+      let options = {
+        contractAddress: address,
+        functionName: "postIdea",
+        abi: ClubContractAbi,
+        params: {
+          _message: message,
+          _metadata,
+        },
+      };
+      setPostStatus("Poping Wallet to Pay for Gas");
+      await contractProcessor.fetch({
+        params: options,
+        onSuccess: async (tx: any) => {
+          setPostStatus("Minting in blockchain");
+          await tx.wait();
+          txSuccess("Posted Idea", "");
+          setPostStatus(undefined);
+          setMessage("");
+          setDescription("");
+        },
+        onError: (error) => {
+          errorToast("Error");
+          setPostStatus(undefined);
+          console.log(error);
+        },
+      });
+    } catch (err) {
+      errorToast("Error");
+      setPostStatus(undefined);
+    }
   }, [contractProcessor, address, message, description, saveFile]);
   return (
     <div>
@@ -103,8 +126,12 @@ const Post = () => {
               />
             )}
           </div>
-          <Button onClick={() => post()} className="mt-6 px-14 text-lg py-3.5">
-            Create Post
+          <Button
+            disabled={!!postStatus}
+            onClick={() => post()}
+            className="mt-6 px-14 text-lg py-3.5"
+          >
+            {postStatus ? postStatus : "Create Post"}
           </Button>
         </div>
       </div>

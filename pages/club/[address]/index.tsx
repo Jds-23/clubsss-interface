@@ -64,6 +64,14 @@ const Club = () => {
   console.log(typeof address === "string" && club?.type === 3, invites);
   const [openInviteModal, setOpenInviteModal] = useState(false);
   const [invitee, setInvitee] = useState("");
+  const [inviteStatus, setInviteStatus] = useState<string>();
+  useEffect(() => {
+    if (!isAddress(invitee)) {
+      setInviteStatus("Enter Valid Address");
+    } else {
+      setInviteStatus(undefined);
+    }
+  }, [invitee]);
 
   return (
     <div>
@@ -86,13 +94,14 @@ const Club = () => {
             placeholder="Invitee"
           />
           <Button
+            disabled={!!inviteStatus}
             onClick={() => {
               if (isAddress(invitee)) invite(invitee);
             }}
             className="mt-2"
             block
           >
-            Invite
+            {inviteStatus ? inviteStatus : "Invite"}
           </Button>
         </div>
       </Modal>
@@ -129,7 +138,7 @@ const Club = () => {
                     <h4 className="text-2xl">
                       {nFormatter(
                         parseFloat(
-                          club.type === 0
+                          club?.type === 0
                             ? formatEther(data.toString() ?? "0")
                             : data.toString() ?? "0"
                         ),
@@ -185,7 +194,7 @@ const Club = () => {
             {ideas?.map((idea) => (
               <PostCard
                 key={idea.id}
-                clubName={club.clubName}
+                clubName={club?.clubName}
                 commentsCount={idea.commentsCount}
                 id={idea.id}
                 score={idea.score}
@@ -211,7 +220,7 @@ const Club = () => {
                       <h4 className="text-2xl">
                         {nFormatter(
                           parseFloat(
-                            club.type === 0
+                            club?.type === 0
                               ? formatEther(data.toString() ?? "0")
                               : data.toString() ?? "0"
                           ),

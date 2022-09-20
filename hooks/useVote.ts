@@ -19,7 +19,8 @@ const useVote = ({ address, index }: { address: string; index: string }) => {
     };
     await contractProcessor.fetch({
       params: options,
-      onSuccess: () => {
+      onSuccess: async (tx: any) => {
+        await tx.wait();
         txSuccess("Voted Idea", "");
       },
       onError: (error) => {
