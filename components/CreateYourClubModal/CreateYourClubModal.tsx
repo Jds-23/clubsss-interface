@@ -1,5 +1,8 @@
-import React, { useCallback } from "react";
-import { useWeb3ExecuteFunction } from "react-moralis";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  useWeb3ExecuteFunction,
+  Web3ExecuteFunctionParameters,
+} from "react-moralis";
 import { useCreateAClubModal } from "../../context/CreateAClubContextProvider";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
@@ -8,6 +11,7 @@ import ClubFactoryAbi from "../../constants/abis/ClubFactory.json";
 import { ClubFactoryAddress } from "../../constants";
 import useToast from "../../hooks/useToast";
 import { ethers } from "ethers";
+import { isAddress } from "ethers/lib/utils";
 const options = [
   { type: "Tokens Module", more: "Holders of ERC20 Token" },
   { type: "NFT Module", more: "Holders of NFT Collection" },
@@ -45,44 +49,72 @@ const CreateYourClubModal = ({
     setApperanceOpen,
   } = useCreateAClubModal();
 
+  const [creatingClubStatus, setCreatingClubStatus] = useState<string>();
+
+  useEffect(() => {
+    if (clubName.length < 3) {
+      setCreatingClubStatus("Club Name Should be of >3 characters");
+    } else if (optionSelected === undefined) {
+      setCreatingClubStatus("Select A Module Option");
+    } else if (
+      (optionSelected === 0 || optionSelected === 1) &&
+      !isAddress(address)
+    ) {
+      setCreatingClubStatus("Enter A Valid Address");
+    } else if (optionSelected === 3 && invites === "") {
+      setCreatingClubStatus("Enter A Valid Number");
+    } else {
+      setCreatingClubStatus(undefined);
+    }
+  }, [setCreatingClubStatus, clubName, address, optionSelected, invites]);
+
   const deployClub = useCallback(async () => {
-    if (optionSelected === undefined || !metadatauri || clubName.length < 3)
-      return;
+    if (optionSelected === undefined || clubName.length < 3) return;
     let data;
-    if (optionSelected === 0 || optionSelected === 1)
-      data = await ethers.utils.defaultAbiCoder.encode(
-        ["address", "string", "string"],
-        [address, clubName, metadatauri]
-      );
-    else if (optionSelected === 2)
-      data = await ethers.utils.defaultAbiCoder.encode(
-        ["string", "string"],
-        [clubName, metadatauri]
-      );
-    else if (optionSelected === 3)
-      data = await ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "string", "string"],
-        [invites, clubName, metadatauri]
-      );
-    let options = {
-      contractAddress: ClubFactoryAddress,
-      functionName: "deployClub",
-      abi: ClubFactoryAbi,
-      params: {
-        index: optionSelected,
-        _data: data,
-      },
-    };
-    await contractProcessor.fetch({
-      params: options,
-      onSuccess: () => {
-        txSuccess("Club Created", "");
-      },
-      onError: (error) => {
-        errorToast("Error");
-        console.log(error);
-      },
-    });
+    try {
+      setCreatingClubStatus("Deploying");
+      if (optionSelected === 0 || optionSelected === 1)
+        data = await ethers.utils.defaultAbiCoder.encode(
+          ["address", "string", "string"],
+          [address, clubName, metadatauri ?? "  "]
+        );
+      else if (optionSelected === 2)
+        data = await ethers.utils.defaultAbiCoder.encode(
+          ["string", "string"],
+          [clubName, metadatauri ?? " "]
+        );
+      else if (optionSelected === 3)
+        data = await ethers.utils.defaultAbiCoder.encode(
+          ["uint256", "string", "string"],
+          [invites, clubName, metadatauri ?? "  "]
+        );
+      let options = {
+        contractAddress: ClubFactoryAddress,
+        functionName: "deployClub",
+        abi: ClubFactoryAbi,
+        params: {
+          index: optionSelected,
+          _data: data,
+        },
+      };
+      await contractProcessor.fetch({
+        params: options,
+        onSuccess: async (tx: any) => {
+          await tx.wait();
+          setCreatingClubStatus(undefined);
+          setOpen(false);
+          txSuccess("Club Created", "");
+        },
+        onError: (error) => {
+          errorToast("Error");
+          setCreatingClubStatus(undefined);
+          console.log(error);
+        },
+      });
+    } catch (err) {
+      setCreatingClubStatus(undefined);
+      errorToast("Error");
+    }
   }, [
     contractProcessor,
     optionSelected,
@@ -90,6 +122,7 @@ const CreateYourClubModal = ({
     clubName,
     metadatauri,
     invites,
+    setCreatingClubStatus,
   ]);
 
   return (
@@ -210,8 +243,13 @@ const CreateYourClubModal = ({
           >
             Set Apprerances
           </button>
-          <Button onClick={() => deployClub()} block className="mt-2">
-            Create your club
+          <Button
+            disabled={!!creatingClubStatus}
+            onClick={() => deployClub()}
+            block
+            className="mt-2"
+          >
+            {creatingClubStatus ? creatingClubStatus : "Create your club"}
           </Button>
         </div>
       </Modal>
