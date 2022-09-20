@@ -1,15 +1,23 @@
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, { useCallback } from "react";
+import { useWeb3ExecuteFunction } from "react-moralis";
+import { useCreateAClubModal } from "../../context/CreateAClubContextProvider";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
-
+import SetClubApperanceModal from "./SetClubApperanceModal";
+import ClubFactoryAbi from "../../constants/abis/ClubFactory.json";
+import { ClubFactoryAddress } from "../../constants";
+import useToast from "../../hooks/useToast";
+import { ethers } from "ethers";
 const options = [
-  { type: "NFT Module", more: "Holders of NFT Collection" },
   { type: "Tokens Module", more: "Holders of ERC20 Token" },
+  { type: "NFT Module", more: "Holders of NFT Collection" },
+  { type: "Free", more: "Anyone Can Join" },
   { type: "Invite Only Module", more: "Invite only club" },
 ];
 const inputNeeded = [
   "NFT Contract Address",
   "Token Contract Address",
+  undefined,
   undefined,
 ];
 
@@ -18,103 +26,56 @@ const CreateYourClubModal = ({
   setOpen,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (arg: boolean) => void;
 }) => {
-  const [optionsDropdown, setOptionsDropdown] = useState(false);
-  const [optionSelected, setOptionSelected] = useState<number>();
-  const [clubName, setClubName] = useState("");
-  const [about, setAbout] = useState("");
-  const [address, setAddress] = useState("");
-  const [invites, setInvites] = useState("3");
+  const { txSuccess, txWaiting, error: errorToast } = useToast();
+  const contractProcessor = useWeb3ExecuteFunction();
+  const {
+    clubName,
+    metadatauri,
+    setClubName,
+    setOptionsDropdown,
+    optionsDropdown,
+    optionSelected,
+    setOptionSelected,
+    address,
+    setAddress,
+    invites,
+    setInvites,
+    setApperanceOpen,
+  } = useCreateAClubModal();
 
-  const [apperanceOpen, setApperanceOpen] = useState(false);
-
-  const coverInput = useRef<any>(null);
-  const [cover, setCover] = useState("");
-
-  const displayInput = useRef<any>(null);
-  const [display, setDisplay] = useState("");
+  const deployClub = useCallback(async () => {
+    if (optionSelected === undefined || !metadatauri || clubName.length < 3)
+      return;
+    const data = await ethers.utils.defaultAbiCoder.encode(
+      ["address", "string", "string"],
+      [address, clubName, metadatauri]
+    );
+    let options = {
+      contractAddress: ClubFactoryAddress,
+      functionName: "deployClub",
+      abi: ClubFactoryAbi,
+      params: {
+        index: optionSelected,
+        _data: data,
+      },
+    };
+    await contractProcessor.fetch({
+      params: options,
+      onSuccess: () => {
+        txSuccess("Club Created", "");
+      },
+      onError: (error) => {
+        errorToast("Error");
+        console.log(error);
+      },
+    });
+  }, [contractProcessor, optionSelected, address, clubName, metadatauri]);
 
   return (
     <>
-      <Modal
-        size="lg"
-        open={apperanceOpen}
-        setOpen={setApperanceOpen}
-        title="Set Apperance"
-      >
-        <div className="p-5 w-full">
-          <div className="w-full border-2 border-lightGray bg-orange-100 h-24 rounded-lg grid place-items-center">
-            <button
-              onClick={() => {
-                if (coverInput) {
-                  coverInput.current.click();
-                }
-              }}
-              className="text-[10px] underline"
-            >
-              Select Cover{" "}
-            </button>
-            <input
-              ref={coverInput}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(evt) => {
-                evt.preventDefault();
-                // uploadfile(evt.target.files);
-              }}
-              disabled={!!cover}
-            />
-          </div>
-          <div className="flex items-center">
-            <div className="w-24 ml-4 -mt-4 border-2 border-lightGray bg-orange-100 h-24  rounded-lg grid place-items-center">
-              <button
-                onClick={() => {
-                  if (displayInput) {
-                    displayInput.current.click();
-                  }
-                }}
-                className="text-[10px] underline"
-              >
-                Select Display{" "}
-              </button>
-              <input
-                ref={displayInput}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(evt) => {
-                  evt.preventDefault();
-                  // uploadfile(evt.target.files);
-                }}
-                disabled={!!display}
-              />
-            </div>
-            <input
-              value={clubName}
-              className="ml-4 outline-none font-bold text-lg"
-              placeholder="Club's Name"
-              onChange={(e) => setClubName(e.target.value)}
-            />
-          </div>
-          <textarea
-            value={about}
-            className="ml-4 mt-2 outline-none w-full"
-            placeholder="About Your Club (simple markdown supported, links)"
-            onChange={(e) => setAbout(e.target.value)}
-          />
-          <button
-            onClick={() => setApperanceOpen(false)}
-            className="w-full mt-4 underline text-sm text-blue-600 decoration-blue-600"
-          >
-            Cancel
-          </button>
-          <Button block className="mt-2">
-            Save
-          </Button>
-        </div>
-      </Modal>
+      <SetClubApperanceModal />
       <Modal title="Create your Club" open={open} setOpen={setOpen}>
         <div className="p-3">
           <div>
@@ -230,7 +191,7 @@ const CreateYourClubModal = ({
           >
             Set Apprerances
           </button>
-          <Button block className="mt-2">
+          <Button onClick={() => deployClub()} block className="mt-2">
             Create your club
           </Button>
         </div>

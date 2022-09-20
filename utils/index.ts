@@ -10,3 +10,6 @@ export const getEllipsisTxt = (str: string, n = 6) => {
   }
   return "";
 };
+export function jsonFile(filename: string, obj: any) {
+  return new File([JSON.stringify(obj)], filename);
+}

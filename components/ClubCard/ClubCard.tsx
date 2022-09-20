@@ -24,14 +24,13 @@ const ClubCard = ({
             <p className="text-lg font-bold truncate hover:text-clip">
               {nameOfClub}
             </p>
-            {postCount && (
-              <p className="text-[10px] font-semibold">{postCount} Posts</p>
-            )}
+            {<p className="text-[10px] font-semibold">{postCount} Posts</p>}
           </div>
         </div>
         <div className="mt-3 flex items-center">
           {tags.map((tag) => (
             <div
+              key={tag.text}
               className={`px-3 text-xs py-0.5 rounded-sm mr-1 bg-orange-200 text-orange-600`}
             >
               {tag.text}

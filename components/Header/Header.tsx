@@ -4,7 +4,8 @@ import { getEllipsisTxt } from "../../utils";
 import Button from "../Button/Button";
 
 const Header = () => {
-  const { authenticate, isAuthenticated, user, account } = useMoralis();
+  const { authenticate, isAuthenticated, user, account, enableWeb3 } =
+    useMoralis();
   console.log(account);
   return (
     <div className="w-full px-4 fixed top-0 left-0 bg-black h-16 flex items-center">
@@ -16,6 +17,8 @@ const Header = () => {
               console.log(isAuthenticated, user, account);
               if (!isAuthenticated) {
                 authenticate();
+              } else {
+                enableWeb3();
               }
             }}
           >

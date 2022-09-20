@@ -5,11 +5,14 @@ import { useState } from "react";
 import Button from "../components/Button/Button";
 import ClubCard from "../components/ClubCard/ClubCard";
 import CreateYourClubModal from "../components/CreateYourClubModal/CreateYourClubModal";
+import { useCreateAClubModal } from "../context/CreateAClubContextProvider";
+import { useClubs } from "../hooks/useClubs";
 
 export default function Home() {
   // const data = useSubgraph();
-  const [open, setOpen] = useState(false);
-
+  const { open, setOpen } = useCreateAClubModal();
+  const clubs = useClubs();
+  console.log(clubs);
   return (
     <div>
       <Head>
@@ -19,42 +22,23 @@ export default function Home() {
       </Head>
       <CreateYourClubModal open={open} setOpen={setOpen} />
 
-      <div className="flex flex-col-reverse lg:flex-row lg:mt-2 px-4 max-w-[1340px] mx-auto">
+      <div className="flex flex-col-reverse lg:flex-row mt-2 lg:mt-4 px-4 max-w-[1340px] mx-auto">
         <div className="w-full">
           <h1 className="font-extrabold text-3xl w-full max-w-xl ">
             Join your favorite clubs and take part in the discussions{" "}
           </h1>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-            <ClubCard
-              address=""
-              bioOfClub="Something to think of"
-              nameOfClub="The Iron Man Club"
-              postCount={20}
-              tags={[
-                { text: "Sports & Game", color: "orange" },
-                { text: "Development", color: "green" },
-              ]}
-            />
-            <ClubCard
-              address=""
-              bioOfClub="Something to think of"
-              nameOfClub="The Iron Man Club"
-              postCount={20}
-              tags={[
-                { text: "Sports & Game", color: "orange" },
-                { text: "Development", color: "green" },
-              ]}
-            />
-            <ClubCard
-              address=""
-              bioOfClub="Something to think of"
-              nameOfClub="The Iron Man Club"
-              postCount={20}
-              tags={[
-                { text: "Sports & Game", color: "orange" },
-                { text: "Development", color: "green" },
-              ]}
-            />
+            {clubs?.map((club) => {
+              return (
+                <ClubCard
+                  address={club.id}
+                  bioOfClub=""
+                  nameOfClub={club.clubName}
+                  postCount={club.ideasCount}
+                  tags={[]}
+                />
+              );
+            })}
           </div>
         </div>
         <div className="w-full lg:w-96">

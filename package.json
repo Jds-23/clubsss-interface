@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.2",
     "autoprefixer": "^10.4.11",
+    "ethers": "^5.7.1",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
     "moralis-v1": "^1.11.0",
