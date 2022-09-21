@@ -55,9 +55,15 @@ const ClubCard = ({
             ))}
           </div>
           <div className="mt-3 flex items-center">
-            <p className="font-medium truncate hover:text-clip text-xs">
-              {bioOfClub}
-            </p>
+            {bioOfClub === "" ? (
+              <p className="font-medium invisible truncate hover:text-clip text-xs">
+                Text
+              </p>
+            ) : (
+              <p className="font-medium truncate hover:text-clip text-xs">
+                {bioOfClub}
+              </p>
+            )}
           </div>
           <Button className="mt-4 px-8 py-2">See Discussion 👉</Button>
         </div>
