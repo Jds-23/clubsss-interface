@@ -11,19 +11,34 @@ import { useWeb3ExecuteFunction } from "react-moralis";
 import useToast from "../../hooks/useToast";
 import ClubContractAbi from "../../constants/abis/ClubContract.json";
 import useVote from "../../hooks/useVote";
+import { useClub } from "../../hooks/useClubs";
+import useDeepCompareEffect from "use-deep-compare-effect";
 
 const Post = () => {
   const router = useRouter();
   const { id } = router.query;
   const idea = useIdea(typeof id === "string" ? id : "");
+  const club = useClub(idea?.club ?? "");
 
   const [metadata, setMetadata] = useState<string>();
+  const [clubMetadata, setClubMetadata] = useState<any>();
   const [metadataError, setMetadataError] = useState(false);
 
   const [comment, setComment] = useState("");
   const { txSuccess, txWaiting, error: errorToast } = useToast();
 
   const { open, setOpen } = useCreateAClubModal();
+
+  useEffect(() => {
+    if (!club) return;
+    const metadataUrl = club.metadata;
+    if (!metadataUrl || metadataUrl === "") return;
+    if (metadata) return;
+    fetch(metadataUrl)
+      .then((res) => res.json())
+      .then((res) => setClubMetadata(res))
+      .catch((err) => {});
+  }, [club]);
 
   useEffect(() => {
     const metadataUrl = idea?.metadata;
@@ -110,13 +125,13 @@ const Post = () => {
           </div>
           <div className="flex items-center mt-1.5">
             <div className="flex items-center">
-              {/* {displayOfClub ? (
-                  <img src={displayOfClub} className="w-6 h-6 rounded" />
-                ) : (
-                  <div className="w-6 h-6 bg-orange-300 rounded" />
-                )} */}
+              {clubMetadata?.display ? (
+                <img src={clubMetadata?.display} className="w-6 h-6 rounded" />
+              ) : (
+                <div className="w-6 h-6 bg-orange-300 rounded" />
+              )}
               <span className="font-bold text-xs ml-1 opacity-60">
-                {"clubName"} |
+                {club?.clubName} |
               </span>
 
               <span className="font-bold text-xs ml-1 opacity-60">

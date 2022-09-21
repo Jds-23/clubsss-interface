@@ -10,6 +10,7 @@ interface IdeaInterface {
   score: number;
   message: string;
   metadata: string;
+  club: string;
   commentsCount: number;
   comments: {
     id: string;
