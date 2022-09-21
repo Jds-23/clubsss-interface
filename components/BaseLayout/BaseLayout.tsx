@@ -21,34 +21,36 @@ export default function BaseLayout({
         serverUrl={"https://gth94kjdatgn.usemoralis.com:2053/server"}
       >
         <CreateAClubContextProvider>
-          <>
-            <Head>
-              <title>Build Ideas</title>
-            </Head>
+          <CreateAClubContextProvider>
+            <>
+              <Head>
+                <title>Build Ideas</title>
+              </Head>
 
-            <Header />
-            <div className="pt-16 min-h-screen">
-              <Toaster position="bottom-right" />
-              {children}
-            </div>
-            <footer className={styles.footer}>
-              <a
-                href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Powered by{" "}
-                <span className={styles.logo}>
-                  <Image
-                    src="/vercel.svg"
-                    alt="Vercel Logo"
-                    width={72}
-                    height={16}
-                  />
-                </span>
-              </a>
-            </footer>
-          </>
+              <Header />
+              <div className="pt-16 min-h-screen">
+                <Toaster position="bottom-right" />
+                {children}
+              </div>
+              <footer className={styles.footer}>
+                <a
+                  href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Powered by{" "}
+                  <span className={styles.logo}>
+                    <Image
+                      src="/vercel.svg"
+                      alt="Vercel Logo"
+                      width={72}
+                      height={16}
+                    />
+                  </span>
+                </a>
+              </footer>
+            </>
+          </CreateAClubContextProvider>
         </CreateAClubContextProvider>
       </MoralisProvider>
     </>

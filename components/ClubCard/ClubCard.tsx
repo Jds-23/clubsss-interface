@@ -8,8 +8,12 @@ const ClubCard = ({
   postCount,
   tags,
   bioOfClub,
+  display,
+  cover,
 }: {
   address: string;
+  cover: string | undefined;
+  display: string | undefined;
   nameOfClub: string;
   bioOfClub: string;
   postCount: number | undefined;
@@ -18,10 +22,21 @@ const ClubCard = ({
   return (
     <Link href={`/club/${address}`}>
       <div className="border-2 cursor-pointer hover:border-primary border-lightGray rounded-lg w-full overflow-hidden">
-        <div className="w-full h-20 bg-orange-300" />
-        <div className="w-full px-3 pb-3 -mt-3">
+        <div className="w-full h-20 overflow-hidden relative bg-orange-300">
+          {cover && (
+            <img className="w-full object-contain top-0 left-0" src={cover} />
+          )}
+        </div>
+        <div className="w-full relative px-3 pb-3 -mt-3">
           <div className="flex items-center">
-            <img src="/img/garga.webp" className="rounded-md w-16 h-16" />
+            {display ? (
+              <img
+                src={display}
+                className="border-1 border-lightGray rounded-md w-16 h-16"
+              />
+            ) : (
+              <div className="border-1 border-lightGray rounded-md bg-orange-200 relative w-16 h-16" />
+            )}
             <div className="ml-2">
               <p className="text-lg font-bold truncate hover:text-clip">
                 {nameOfClub}
