@@ -30,19 +30,26 @@ const SetClubApperanceModal = () => {
 
   const uploadcover = async (file: FileList | null) => {
     if (!file) return;
-    const Url = (await saveFile(file[0].name, file[0], { saveIPFS: true }))
-      ?._url;
+    if (!file[0]) return;
+    const saveFileRes = await saveFile(file[0].name, file[0], {
+      saveIPFS: true,
+    });
+    const Url = saveFileRes?.ipfs();
     setCover(Url);
   };
   const uploadisplay = async (file: FileList | null) => {
     if (!file) return;
-    const Url = (await saveFile(file[0].name, file[0], { saveIPFS: true }))
-      ?._url;
+    if (!file[0]) return;
+    const saveFileRes = await saveFile(file[0].name, file[0], {
+      saveIPFS: true,
+    });
+    const Url = saveFileRes?.ipfs();
     setDisplay(Url);
   };
   const save = useCallback(async () => {
     const file = jsonFile("metadata.json", { clubName, about, cover, display });
-    const Url = (await saveFile(file.name, file, { saveIPFS: true }))?._url;
+    const saveFileRes = await saveFile(file.name, file, { saveIPFS: true });
+    const Url = saveFileRes?.ipfs();
     setMetadatauri(Url);
     txSuccess("Apperance Saved", "");
   }, [clubName, about, cover, display, setMetadatauri]);

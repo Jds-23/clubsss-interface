@@ -40,8 +40,9 @@ const Post = () => {
     try {
       setPostStatus("Saving Message in IPFS");
       const file = jsonFile("metadata.json", { description });
-      const _metadata = (await saveFile(file.name, file, { saveIPFS: true }))
-        ?._url;
+      const _metadata = (
+        await saveFile(file.name, file, { saveIPFS: true })
+      )?.ipfs();
 
       let options = {
         contractAddress: address,
@@ -112,7 +113,7 @@ const Post = () => {
               </Button>
             </div>
             {preview ? (
-              <div className="text-xs mb-2 w-full h-44 markdown-style  active:outline-primary focus:outline-primary px-4 py-3 rounded-md bg-[#f8f8f8] border border-lightGray">
+              <div className="text-xs overflow-y-auto mb-2 w-full h-44 markdown-style  active:outline-primary focus:outline-primary px-4 py-3 rounded-md bg-[#f8f8f8] border border-lightGray">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {description}
                 </ReactMarkdown>
