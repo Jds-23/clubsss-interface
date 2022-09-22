@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  useMoralis,
   useWeb3ExecuteFunction,
   Web3ExecuteFunctionParameters,
 } from "react-moralis";
@@ -32,6 +33,8 @@ const CreateYourClubModal = ({
   open: boolean;
   setOpen: (arg: boolean) => void;
 }) => {
+  const { account } = useMoralis();
+
   const { txSuccess, txWaiting, error: errorToast } = useToast();
   const contractProcessor = useWeb3ExecuteFunction();
   const {
@@ -52,7 +55,9 @@ const CreateYourClubModal = ({
   const [creatingClubStatus, setCreatingClubStatus] = useState<string>();
 
   useEffect(() => {
-    if (clubName.length < 3) {
+    if (!account) {
+      setCreatingClubStatus("Connect Wallet");
+    } else if (clubName.length < 3) {
       setCreatingClubStatus("Club Name Should be of >3 characters");
     } else if (optionSelected === undefined) {
       setCreatingClubStatus("Select A Module Option");
@@ -66,7 +71,14 @@ const CreateYourClubModal = ({
     } else {
       setCreatingClubStatus(undefined);
     }
-  }, [setCreatingClubStatus, clubName, address, optionSelected, invites]);
+  }, [
+    setCreatingClubStatus,
+    clubName,
+    account,
+    address,
+    optionSelected,
+    invites,
+  ]);
 
   const deployClub = useCallback(async () => {
     if (optionSelected === undefined || clubName.length < 3) return;

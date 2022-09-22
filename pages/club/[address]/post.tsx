@@ -2,7 +2,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
-import { useMoralisFile, useWeb3ExecuteFunction } from "react-moralis";
+import {
+  useMoralis,
+  useMoralisFile,
+  useWeb3ExecuteFunction,
+} from "react-moralis";
 import Button from "../../../components/Button/Button";
 import useToast from "../../../hooks/useToast";
 import ClubContractAbi from "../../../constants/abis/ClubContract.json";
@@ -13,7 +17,7 @@ import remarkGfm from "remark-gfm";
 const Post = () => {
   const router = useRouter();
   const address = router.asPath.split("/")[2];
-
+  const { account } = useMoralis();
   const [message, setMessage] = useState("");
   const [description, setDescription] = useState("");
   const [preview, setPreview] = useState(false);
@@ -22,12 +26,14 @@ const Post = () => {
   const [postStatus, setPostStatus] = useState<string>();
 
   useEffect(() => {
-    if (message.length < 10) {
+    if (!account) {
+      setPostStatus("Connect Wallet");
+    } else if (message.length < 10) {
       setPostStatus("Message should be of more then >10 characters");
     } else {
       setPostStatus(undefined);
     }
-  }, [setPostStatus, message]);
+  }, [setPostStatus, message, account]);
 
   const contractProcessor = useWeb3ExecuteFunction();
 
