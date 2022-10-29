@@ -14,6 +14,7 @@ const PostCard = ({
   message,
   metadata,
   score,
+  userVoted,
 }: {
   id: string;
   user: string;
@@ -23,15 +24,28 @@ const PostCard = ({
   commentsCount: number;
   clubName: string;
   displayOfClub: string | undefined;
+  userVoted: boolean;
 }) => {
   const address = id.split("-")[0];
   const index = id.split("-")[1];
   const { vote } = useVote({ address, index });
   return (
     <div className="cursor-pointer border-b pb-1 mt-2 border-b-lightGray flex items-center">
-      <div className="flex items-center opacity-50 h-full mr-2">
-        <div className="flex-col flex items-center">
-          <button className="cursor-pointer" onClick={() => vote()}>
+      <div
+        className={`flex items-center ${
+          userVoted ? "" : "opacity-50"
+        } h-full mr-2`}
+      >
+        <div
+          className={`flex-col flex items-center ${
+            userVoted ? "text-primary" : ""
+          }`}
+        >
+          <button
+            disabled={userVoted}
+            className={`${userVoted ? "cursor-not-allowed" : "cursor-pointer"}`}
+            onClick={() => vote()}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

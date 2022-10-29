@@ -21,7 +21,7 @@ const SetClubApperanceModal = () => {
     apperanceOpen,
     setApperanceOpen,
   } = useCreateAClubModal();
-  const { error, isUploading, moralisFile, saveFile } = useMoralisFile();
+  const { saveFile } = useMoralisFile();
   const { txSuccess, txWaiting, error: errorToast } = useToast();
 
   const coverInput = useRef<any>(null);

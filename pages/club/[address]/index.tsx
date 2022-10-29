@@ -176,7 +176,7 @@ const Club = () => {
           </div>
           <p className="mt-3 text-sm">{metadata?.about}</p>
           <div className="mt-3 w-full border-b pb-1 border-b-gray flex items-center">
-            <div className={`mr-2 text-xs cursor-pointer ${"text-gray"}`}>
+            {/* <div className={`mr-2 text-xs cursor-pointer ${"text-gray"}`}>
               Trending this week
             </div>
             <div
@@ -188,7 +188,7 @@ const Club = () => {
               className={`mr-2 text-xs cursor-pointer ${"text-gray opacity-60"}`}
             >
               Top posts this week
-            </div>
+            </div> */}
           </div>
           <div className="w-full mt-6">
             {ideas?.map((idea) => (
@@ -202,6 +202,11 @@ const Club = () => {
                 message={idea.message}
                 metadata={idea.metadata}
                 displayOfClub={metadata?.display}
+                userVoted={
+                  idea.votes.filter(
+                    (vote) => vote.user === account?.toLowerCase()
+                  ).length > 0
+                }
               />
             ))}
           </div>

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   useMoralis,
+  useMoralisFile,
   useWeb3ExecuteFunction,
   Web3ExecuteFunctionParameters,
 } from "react-moralis";
@@ -13,6 +14,8 @@ import { ClubFactoryAddress } from "../../constants";
 import useToast from "../../hooks/useToast";
 import { ethers } from "ethers";
 import { isAddress } from "ethers/lib/utils";
+import { jsonFile } from "../../utils";
+import { generatedNft } from "../../utils/imageGeneration";
 const options = [
   { type: "Tokens Module", more: "Holders of ERC20 Token" },
   { type: "NFT Module", more: "Holders of NFT Collection" },
@@ -34,6 +37,7 @@ const CreateYourClubModal = ({
   setOpen: (arg: boolean) => void;
 }) => {
   const { account } = useMoralis();
+  const { saveFile } = useMoralisFile();
 
   const { txSuccess, txWaiting, error: errorToast } = useToast();
   const contractProcessor = useWeb3ExecuteFunction();
@@ -85,20 +89,33 @@ const CreateYourClubModal = ({
     let data;
     try {
       setCreatingClubStatus("Deploying");
+      let defaultMetadata = "";
+      if (!metadatauri) {
+        const file = jsonFile("metadata.json", {
+          clubName,
+          about: "",
+          cover: "",
+          display: `data:image/svg+xml;base64,${btoa(generatedNft(clubName))}`,
+        });
+        const saveFileRes = await saveFile(file.name, file, { saveIPFS: true });
+        const Url = saveFileRes?.ipfs();
+        defaultMetadata = Url ?? "";
+        txSuccess("Apperance Saved", "");
+      }
       if (optionSelected === 0 || optionSelected === 1)
         data = await ethers.utils.defaultAbiCoder.encode(
           ["address", "string", "string"],
-          [address, clubName, metadatauri ?? "  "]
+          [address, clubName, metadatauri ?? defaultMetadata]
         );
       else if (optionSelected === 2)
         data = await ethers.utils.defaultAbiCoder.encode(
           ["string", "string"],
-          [clubName, metadatauri ?? " "]
+          [clubName, metadatauri ?? defaultMetadata]
         );
       else if (optionSelected === 3)
         data = await ethers.utils.defaultAbiCoder.encode(
           ["uint256", "string", "string"],
-          [invites, clubName, metadatauri ?? "  "]
+          [invites, clubName, metadatauri ?? defaultMetadata]
         );
       let options = {
         contractAddress: ClubFactoryAddress,

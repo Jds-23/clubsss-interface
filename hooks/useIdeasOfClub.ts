@@ -12,6 +12,11 @@ interface IdeaInterface {
   metadata: string;
   club: string;
   commentsCount: number;
+  votes: {
+    id: string;
+    user: string;
+    weight: string;
+  }[];
   comments: {
     id: string;
     metadata: string;
@@ -34,6 +39,18 @@ const QUERY = (address: string) => `{
      downScore
      commentsCount
    }
+   }`;
+const VOTEQUERY = (address: string) => `{
+    votes(where:{club:"${address}"}){
+      id
+      weight
+      idea{
+        id
+      }
+      user{
+        id
+      }
+    }
    }`;
 const QUERYGETIDEA = (address: string) => `{
     ideas(where:{id:"${address}"}){
@@ -68,10 +85,24 @@ const fetcher = (query) => request(clubv1subgraph, query);
 
 export function useIdeasOfClub(address: string): IdeaInterface[] | undefined {
   const { data } = useSWR(QUERY(address), fetcher, { refreshInterval: 7000 });
+  const { data: voteData } = useSWR(VOTEQUERY(address), fetcher, {
+    refreshInterval: 7000,
+  });
   return data?.ideas?.map((idea: any) => {
     const upScore = ethers.BigNumber.from(idea.upScore);
     const score =
       idea.club.type === "0" ? formatEther(upScore.toString()) : upScore;
+    const votes =
+      voteData?.votes
+        ?.filter((data: any) => data.idea.id === idea.id)
+        ?.map((data: any) => {
+          return {
+            user: data.user.id,
+            idea: data.idea.id,
+            weight: data.weight,
+          };
+        }) ?? [];
+    console.log(voteData);
     return {
       id: idea.id,
       user: idea.user.id,
@@ -80,6 +111,7 @@ export function useIdeasOfClub(address: string): IdeaInterface[] | undefined {
       metadata: idea.metadata,
       commentsCount: parseFloat(idea.commentsCount),
       club: idea.club.id,
+      votes,
     };
   });
 }
@@ -87,10 +119,24 @@ export function useIdea(address: string): IdeaInterface | undefined {
   const { data } = useSWR(QUERYGETIDEA(address), fetcher, {
     refreshInterval: 7000,
   });
+  const { data: voteData } = useSWR(VOTEQUERY(address), fetcher, {
+    refreshInterval: 7000,
+  });
+
   return data?.ideas?.map((idea: any) => {
     const upScore = ethers.BigNumber.from(idea.upScore);
     const score =
       idea.club.type === "0" ? formatEther(upScore.toString()) : upScore;
+    const votes =
+      voteData?.votes
+        ?.filter((data: any) => data.idea.id === idea.id)
+        ?.map((data: any) => {
+          return {
+            user: data.user.id,
+            idea: data.idea.id,
+            weight: data.weight,
+          };
+        }) ?? [];
     return {
       id: idea.id,
       user: idea.user.id,
@@ -99,6 +145,7 @@ export function useIdea(address: string): IdeaInterface | undefined {
       metadata: idea.metadata,
       commentsCount: parseFloat(idea.commentsCount),
       club: idea.club.id,
+      votes,
       comments: idea.comments.map((comment: any) => {
         return {
           id: comment.id,
