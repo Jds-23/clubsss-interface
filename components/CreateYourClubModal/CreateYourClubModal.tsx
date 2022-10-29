@@ -19,7 +19,7 @@ import { generatedNft } from "../../utils/imageGeneration";
 const options = [
   { type: "Tokens Module", more: "Holders of ERC20 Token" },
   { type: "NFT Module", more: "Holders of NFT Collection" },
-  { type: "Free", more: "Anyone Can Join" },
+  { type: "Free Module", more: "Anyone Can Join" },
   { type: "Invite Only Module", more: "Invite only club" },
 ];
 const inputNeeded = [
@@ -54,6 +54,8 @@ const CreateYourClubModal = ({
     invites,
     setInvites,
     setApperanceOpen,
+    about,
+    setAbout,
   } = useCreateAClubModal();
 
   const [creatingClubStatus, setCreatingClubStatus] = useState<string>();
@@ -166,6 +168,15 @@ const CreateYourClubModal = ({
               value={clubName}
               onChange={(e) => setClubName(e.target.value)}
               placeholder="FC Barcelona Fans"
+            />
+          </div>
+          <div>
+            <label className="font-bold mt-1">Club’s Bio</label>
+            <input
+              className="text-xs mb-2 w-full active:outline-primary focus:outline-primary px-4 py-3 rounded-md bg-[#f8f8f8] border border-lightGray"
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+              placeholder="We are cules"
             />
           </div>
           <div>

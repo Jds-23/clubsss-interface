@@ -12,9 +12,14 @@ const Header = () => {
   return (
     <div className="w-full z-10 px-4 fixed top-0 left-0 bg-black h-16 flex items-center">
       <div className="w-full flex items-center justify-between max-w-[1340px] m-auto">
-        <Link href={"/"}>
-          <img src="/img/clubsss.svg" className="w-28 object-contain" />
-        </Link>
+        <div className="flex items-center">
+          <Link href={"/"}>
+            <img src="/img/clubsss.svg" className="w-28 object-contain" />
+          </Link>
+          <span className="bg-primary p-0.5 ml-2 font-bold rounded text-[10px] text-black">
+            demo
+          </span>
+        </div>
         <div className="flex items-center">
           {account && (
             <>

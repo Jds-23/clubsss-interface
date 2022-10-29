@@ -68,13 +68,14 @@ const SetClubApperanceModal = () => {
               className="w-full absolute top-0 left-0 bg-orange-100 object-contain rounded-lg "
             />
           )}
+          <div className="w-full h-24 absolute top-0 left-0 bg-white opacity-50 object-contain rounded-lg " />
           <button
             onClick={() => {
               if (coverInput) {
                 coverInput.current.click();
               }
             }}
-            className="text-[10px] underline"
+            className="text-[10px] z-10 underline"
           >
             Select Cover{" "}
           </button>
@@ -87,7 +88,7 @@ const SetClubApperanceModal = () => {
               evt.preventDefault();
               uploadcover(evt.target.files);
             }}
-            disabled={!!cover}
+            // disabled={!!cover}
           />
         </div>
         <div className="flex relative items-center">
@@ -98,13 +99,14 @@ const SetClubApperanceModal = () => {
                 className="w-24 ml-4 -mt-4  absolute top-0 left-0 bg-orange-100 object-contain rounded-lg "
               />
             )}
+            <div className="w-24 h-24 ml-4 -mt-4  absolute top-0 left-0 z-10 bg-white opacity-50 rounded-lg " />
             <button
               onClick={() => {
                 if (displayInput) {
                   displayInput.current.click();
                 }
               }}
-              className="text-[10px] underline"
+              className="text-[10px] z-10 underline"
             >
               Select Display{" "}
             </button>
@@ -117,7 +119,7 @@ const SetClubApperanceModal = () => {
                 evt.preventDefault();
                 uploadisplay(evt.target.files);
               }}
-              disabled={!!display}
+              // disabled={!!display}
             />
           </div>
           <input
