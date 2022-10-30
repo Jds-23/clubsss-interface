@@ -21,6 +21,14 @@ const Header = () => {
           </span>
         </div>
         <div className="flex items-center">
+          <a
+            href="https://thoracic-cocoa-05d.notion.site/Create-A-Club-with-clubsss-03d277eb26d14180a66816f61d392c33"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline px-5 text-sm py-2 flex justify-center font-bold rounded-md justify-self-end w-fit cursor-pointer  hover:brightness-90"
+          >
+            See Tutorial 📖
+          </a>
           {account && (
             <>
               {chainId !== "0x13881" && (

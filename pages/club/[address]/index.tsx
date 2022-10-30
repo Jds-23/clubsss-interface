@@ -53,9 +53,17 @@ const Club = () => {
       abi: ClubContractAbi,
       params: { _member: account ?? "" },
     });
+  const { runContractFunction: run, data: owner } = useWeb3Contract({
+    contractAddress: typeof address === "string" ? address : undefined,
+    functionName: "owner",
+    abi: ClubContractAbi,
+    params: {},
+  });
   useEffect(() => {
     runContractFunction();
-  }, [runContractFunction]);
+    run();
+  }, [runContractFunction, run]);
+  console.log(owner);
 
   const { invite, invites } = useInviteContract(
     typeof address === "string" && club?.type === 3 ? address : undefined,
